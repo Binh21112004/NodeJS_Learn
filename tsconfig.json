@@ -1,11 +1,30 @@
-{ 
-  "compilerOptions": { 
-    "module": "commonjs", 
+{
+  "compilerOptions": {
+    "module": "commonjs",
     "rootDir": "./src",
-    "esModuleInterop": true, 
-    "target": "es6", 
-    "sourceMap": true, 
-    "skipLibCheck": true, 
-    "outDir": "./dist" 
-  } 
-} 
+    "esModuleInterop": true,
+    "target": "es6",
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "config/*": [
+        "./src/config/*"
+      ],
+      "controllers/*": [
+        "./src/controllers/*"
+      ],
+      "models/*": [
+        "./src/models/*"
+      ],
+      "routes/*": [
+        "./src/routes/*"
+      ],
+      "services/*": [
+        "./src/services/*"
+      ],
+    },
+    
+  }
+}
