@@ -4,9 +4,11 @@ import getConnection from "config/database";
 const handleCreateUser = async (fullName: string, email: string, address: string) => {
   //insert into DB
   const newUser = await prisma.user.create({data : {
-    name: fullName,
-    email : email,
-    address : address
+    fullName: fullName,
+    username : email,
+    address : address,
+    password : "",
+    accountType : ""
   }})
 
   return newUser;
@@ -48,9 +50,11 @@ const updateUserById = async (id: string | string[], fullName : string, email: s
     id : +id
   },
   data: {
-    name: fullName,
-    email : email,
-    address : address
+    fullName: fullName,
+    username : email,
+    address : address,
+    password : "",
+    accountType : ""
   },
 });
 
