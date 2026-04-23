@@ -1,25 +1,52 @@
 import { prisma } from "config/client";
-import { count } from "console";
+import { hashPassword } from "services/user.service";
+import { ACCOUNT_TYPE } from "config/constants";
 
 const initDatabase = async () => {
   const countUser = await prisma.user.count();
-  if(countUser === 0){
-    await prisma.user.createMany({
-    data: [
-      {
-        username : "hoidanit@gmail.com",
-        password : "123456",
-        accountType : "SYSTEM"
-      },
-      {
-        username : "admin@gmail.com",
-        password : "123456",
-        accountType : "SYSTEM"
-      }
-    ]
-  })
+  const countRole = await prisma.role.count();
+  if (countRole === 0) {
+    await prisma.role.createMany({
+      data: [
+        {
+          name: "ADMIN",
+          description: "Admin thì full quyền",
+
+        },
+        {
+          name: "USER",
+          description: "User thông thường",
+        }
+      ]
+    })
   }
-  else{
+  if (countUser === 0) {
+    const defaultPassword = await hashPassword("123456");
+    const adminRole = await prisma.role.findFirst({
+      where : {name : "ADMIN"}
+    })
+    if(adminRole)
+      await prisma.user.createMany({
+      data: [
+        {
+          fullName: "hoidanit",
+          username: "hoidanit@gmail.com",
+          password: defaultPassword,
+          accountType: ACCOUNT_TYPE.SYSTEM,
+          roleId : adminRole.id
+        },
+        {
+          fullName: "Admin",
+          username: "admin@gmail.com",
+          password: defaultPassword,
+          accountType: ACCOUNT_TYPE.SYSTEM,
+          roleId : adminRole.id
+        }
+      ]
+    })
+    
+  }
+  if(countRole !== 0 && countUser !== 0) {
     console.log(">>> ALREADY INIT DATA...");
   }
 }
