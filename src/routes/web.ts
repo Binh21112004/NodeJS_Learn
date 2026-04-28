@@ -3,17 +3,25 @@ import { getCreateUserPage, getHomePage, postCreateUser, postDeleteUser, getView
 import { getAdminOrderPage, getAdminProductPage, getAdminUserPage, getDashBoard } from "controllers/admin/dashboard.controller";
 import fileUploadMiddleware from "src/middleware/multer";
 import { getProductPage } from "controllers/client/product.controller";
-import { getAdminCreatePage, postAdminCreateProduct } from "controllers/admin/product.controller";
+import { getAdminCreatePage, postAdminCreateProduct, getViewProduct, postAdminUpdateProduct, postDeleteProduct } from "controllers/admin/product.controller";
+import { getLoginPage, getRegisterPage, postRegister } from "controllers/client/auth.controller";
+import passport from "passport";
 
 const webRoutes = (app: Express) => {
   const router = express.Router();
   router.get("/", getHomePage)
   router.get("/product/:id", getProductPage)
+  router.get('/login', getLoginPage)
+  router.post('/login', passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login'
+  }))
+  router.get('/register', getRegisterPage)
+  router.post('/register', postRegister)
 
 
 
 
-  
 
   // admin routes
   router.get("/admin", getDashBoard);
@@ -26,10 +34,11 @@ const webRoutes = (app: Express) => {
 
   router.get('/admin/product', getAdminProductPage)
   router.get('/admin/create-product', getAdminCreatePage)
-  router.post('/admin/create-product', fileUploadMiddleware('image', "images/product"),postAdminCreateProduct)
-
+  router.post('/admin/create-product', fileUploadMiddleware('image', "images/product"), postAdminCreateProduct)
+  router.get('/admin/view-product/:id', getViewProduct)
+  router.post('/admin/update-product', fileUploadMiddleware('image', "images/product"), postAdminUpdateProduct)
   router.get('/admin/order', getAdminOrderPage)
-
+  router.post('/admin/delete-product/:id', postDeleteProduct)
 
   app.use("/", router);
 

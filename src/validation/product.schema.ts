@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const ProductSchema = z.object({
+  id : z.string().optional(),
   name: z.string().trim().min(1, { message: "Tên không được để trống" }),
   price: z.string()
     .transform((val) => (val === "" ? 0 : Number(val)))
@@ -15,7 +16,7 @@ export const ProductSchema = z.object({
     .refine((num) => num > 0, {
       message: "Số lượng tối thiểu là 1",
     }),
-  factory: z.string().trim().min(1, { message: "factỏy không được để trống" }),
+  factory: z.string().trim().min(1, { message: "factory không được để trống" }),
   target: z.string().trim().min(1, { message: "target không được để trống" }),
 });
 
