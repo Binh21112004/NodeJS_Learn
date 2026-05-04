@@ -2,32 +2,38 @@ import express, { Express } from "express";
 import { getCreateUserPage, getHomePage, postCreateUser, postDeleteUser, getViewUser, postUpdateUser } from "controllers/user.controller";
 import { getAdminOrderPage, getAdminProductPage, getAdminUserPage, getDashBoard } from "controllers/admin/dashboard.controller";
 import fileUploadMiddleware from "src/middleware/multer";
-import { getProductPage } from "controllers/client/product.controller";
+import { getProductPage,postAddProductToCart, getCartPage, postDeleteProductInCart, getCheckOutPage } from "controllers/client/product.controller";
 import { getAdminCreatePage, postAdminCreateProduct, getViewProduct, postAdminUpdateProduct, postDeleteProduct } from "controllers/admin/product.controller";
-import { getLoginPage, getRegisterPage, postRegister,getSuccessRedirectPage } from "controllers/client/auth.controller";
+import { getLoginPage, getRegisterPage, postRegister,getSuccessRedirectPage,postLogout } from "controllers/client/auth.controller";
 import passport from "passport";
-import { isAdmin, isLogin } from "src/middleware/auth";
+import { isAdmin } from "src/middleware/auth";
 
 const webRoutes = (app: Express) => {
   const router = express.Router();
   router.get("/", getHomePage)
   router.get("/success-redirect",getSuccessRedirectPage)
   router.get("/product/:id", getProductPage)
-  router.get('/login', isLogin ,getLoginPage)
+  router.get('/login' ,getLoginPage)
   router.post('/login', passport.authenticate('local', {
     successRedirect: '/success-redirect',
     failureRedirect: '/login',
     failureMessage: true
   }))
+  router.post('/logout',postLogout);
   router.get('/register', getRegisterPage)
   router.post('/register', postRegister)
+
+  router.post('/add-product-to-cart/:id',postAddProductToCart)
+  router.get("/cart", getCartPage)
+  router.post("/delete-product-in-cart/:id", postDeleteProductInCart)
+  router.get("/checkout", getCheckOutPage)
 
 
 
 
 
   // admin routes
-  router.get("/admin", isAdmin,getDashBoard);
+  router.get("/admin",getDashBoard);
   router.get('/admin/user', getAdminUserPage)
   router.get("/admin/create-user", getCreateUserPage)
   router.post("/admin/handle-create-user", fileUploadMiddleware('avatar'), postCreateUser)
@@ -43,7 +49,7 @@ const webRoutes = (app: Express) => {
   router.get('/admin/order', getAdminOrderPage)
   router.post('/admin/delete-product/:id', postDeleteProduct)
 
-  app.use("/", router);
+  app.use("/", isAdmin,router);
 
 }
 

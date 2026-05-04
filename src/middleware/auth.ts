@@ -4,6 +4,7 @@ const isLogin = async (req: Request, res: Response, next: NextFunction) => {
   const isAuthenticate = req.isAuthenticated();
   if(isAuthenticate){
     res.redirect("/");
+    return;
   }
   else {
     next();
@@ -11,11 +12,14 @@ const isLogin = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as any;
-
-  if(user?.role?.name === "ADMIN"){
-    next()
+  if(req.path.startsWith('/admin')){
+    const user = req.user;
+    if(user?.role?.name === "ADMIN"){
+      next();
+    }
+    else res.render("status/403.ejs");
+    return;
   }
-  else res.redirect("/")
+  next();
 }
 export {isLogin, isAdmin}

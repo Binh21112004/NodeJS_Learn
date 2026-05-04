@@ -1,3 +1,4 @@
+/// <reference path="./types/index.d.ts" />
 import express from "express";
 import 'dotenv/config'
 import webRoutes from "src/routes/web";
@@ -65,7 +66,7 @@ initDatabase();
 //handle not found 404
 
 app.use((req, res) => {
-  res.send("404 not found")
+  res.render("status/404.ejs")
 })
 
 
