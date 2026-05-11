@@ -1,8 +1,8 @@
 import express, { Express } from "express";
 import { getCreateUserPage, getHomePage, postCreateUser, postDeleteUser, getViewUser, postUpdateUser } from "controllers/user.controller";
-import { getAdminOrderPage, getAdminProductPage, getAdminUserPage, getDashBoard } from "controllers/admin/dashboard.controller";
+import { getAdminOrderPage, getAdminProductPage, getAdminUserPage, getDashBoard,getAdminOrderDetailPage } from "controllers/admin/dashboard.controller";
 import fileUploadMiddleware from "src/middleware/multer";
-import { getProductPage,postAddProductToCart, getCartPage, postDeleteProductInCart, getCheckOutPage } from "controllers/client/product.controller";
+import { getProductPage,postAddProductToCart, getCartPage, postDeleteProductInCart, getCheckOutPage, postHandleCartToCheckOut,postPlaceOrder, getThanksPage,getOrderHistoryPage , postAddToCartFromDetailPage} from "controllers/client/product.controller";
 import { getAdminCreatePage, postAdminCreateProduct, getViewProduct, postAdminUpdateProduct, postDeleteProduct } from "controllers/admin/product.controller";
 import { getLoginPage, getRegisterPage, postRegister,getSuccessRedirectPage,postLogout } from "controllers/client/auth.controller";
 import passport from "passport";
@@ -26,9 +26,12 @@ const webRoutes = (app: Express) => {
   router.post('/add-product-to-cart/:id',postAddProductToCart)
   router.get("/cart", getCartPage)
   router.post("/delete-product-in-cart/:id", postDeleteProductInCart)
+  router.post("/handle-cart-to-checkout", postHandleCartToCheckOut)
   router.get("/checkout", getCheckOutPage)
-
-
+  router.post("/place-order",postPlaceOrder);
+  router.get("/thanks", getThanksPage)
+  router.get("/order-history",getOrderHistoryPage)
+  router.post("/add-to-cart-from-detail-page/:id", postAddToCartFromDetailPage)
 
 
 
@@ -47,6 +50,7 @@ const webRoutes = (app: Express) => {
   router.get('/admin/view-product/:id', getViewProduct)
   router.post('/admin/update-product', fileUploadMiddleware('image', "images/product"), postAdminUpdateProduct)
   router.get('/admin/order', getAdminOrderPage)
+  router.get('/admin/order/:id', getAdminOrderDetailPage)
   router.post('/admin/delete-product/:id', postDeleteProduct)
 
   app.use("/", isAdmin,router);

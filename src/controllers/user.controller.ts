@@ -4,8 +4,6 @@ import { getAllRoles, getAllUsers, getUserById, handleCreateUser, handleDeleteUs
 
 const getHomePage = async (req: Request, res: Response) => {
   const products = await getProducts();
-  const user = req.user;
-  console.log(user)
   return res.render('client/home/show', {
     products
   })
@@ -13,18 +11,18 @@ const getHomePage = async (req: Request, res: Response) => {
 
 const getCreateUserPage = async (req: Request, res: Response) => {
   const roles = await getAllRoles();
- 
+
   return res.render('admin/user/create.ejs', {
-    roles : roles
+    roles: roles
   });
 }
 
 
 const postCreateUser = async (req: Request, res: Response) => {
-  const { fullname, username, address,phone, role } = req.body;
+  const { fullname, username, address, phone, role } = req.body;
   const file = req.file;
-  const avatar  = file?.filename ?? "";
-  await handleCreateUser(fullname, username, address,phone, avatar, role);
+  const avatar = file?.filename ?? "";
+  await handleCreateUser(fullname, username, address, phone, avatar, role);
   return res.redirect('/admin/user');
 }
 
@@ -42,18 +40,17 @@ const getViewUser = async (req: Request, res: Response) => {
   return res.render('admin/user/detail.ejs', {
     id: id,
     user: user,
-    roles : roles
+    roles: roles
   });
 
 }
 
 const postUpdateUser = async (req: Request, res: Response) => {
-  const { fullname, address,phone, role, id } = req.body;
+  const { fullname, address, phone, role, id } = req.body;
   const file = req.file;
-  const avatar  = file?.filename ?? undefined;
+  const avatar = file?.filename ?? undefined;
   // update user by id
   await updateUserById(id, fullname, phone, role, address, avatar);
-
 
   return res.redirect("/admin/user");
 

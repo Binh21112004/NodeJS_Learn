@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { addProductToCart, getProductById, getProductInCart, deleteProductInCart } from "services/client/item.service";
+import { addProductToCart, getProductById, getProductInCart, deleteProductInCart, updateCartDetailBeforeCheckout , handlePlaceOrder , getOrderHistory} from "services/client/item.service";
 
 const getProductPage = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -55,4 +55,48 @@ const getCheckOutPage = async (req: Request, res: Response) => {
   })
 }
 
-export { getProductPage, postAddProductToCart, getCartPage, postDeleteProductInCart,getCheckOutPage }
+const postHandleCartToCheckOut = async (req: Request, res: Response) => {
+  const user = req.user;
+  if(!user) return res.redirect("/login");
+  const currentCartDetail: {id: string, quantity:string} [] = req.body?.cartDetails ?? [];
+  await updateCartDetailBeforeCheckout(currentCartDetail);
+  return res.redirect("/checkout")
+
+}
+
+const postPlaceOrder = async (req: Request, res: Response) => {
+  const user = req.user;
+  if(!user) return res.redirect("/login");
+  const {receiverName,receiverAddress, receiverPhone, totalPrice} = req.body;
+  await handlePlaceOrder(user.id,receiverName,receiverAddress, receiverPhone, +totalPrice)
+  return res.redirect("/thanks")
+
+}
+
+const getThanksPage = async (req: Request, res: Response) => {
+  const user = req.user;
+  if(!user) return res.redirect("/login");
+  return res.render("client/product/thanks.ejs")
+}
+
+const getOrderHistoryPage = async (req : Request, res : Response) => {
+  const user = req.user;
+  if(!user) return res.redirect("/login");
+  const orders = await getOrderHistory(user.id);
+
+  return res.render("client/product/order.history.ejs",{
+    orders
+  })
+}
+
+
+const postAddToCartFromDetailPage = async (req : Request, res : Response) => {
+  const {id} = req.params;
+  const {quantity} = req.body;
+  const user = req.user;
+  if(!user) return res.redirect("/login");
+
+  await addProductToCart(+quantity,+id,user)
+  return res.redirect(`/product/${id}`)
+}
+export { getProductPage, postAddProductToCart, getCartPage, postDeleteProductInCart,getCheckOutPage,postHandleCartToCheckOut,postPlaceOrder , getThanksPage, getOrderHistoryPage , postAddToCartFromDetailPage}

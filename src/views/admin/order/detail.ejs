@@ -27,50 +27,51 @@
               <div>
                 <table class="table table-hover table-bordered">
                   <thead>
-                    <th>ID</th>
-                    <th>User</th>
-                    <th>Total Price</th>
-                    <th>Status</th>
-                    <th>Payment Method</th>
-                    <th>Payment Status</th>
-                    <th>Action</th>
+                    <th>Sản phẩm</th>
+                    <th>Tên</th>
+                    <th>Giá cả</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
                   </thead>
                   <tbody>
-                    <% results.forEach( function (result) { %>
+                    <% orderDetails.forEach( function (orderDetail,index) { %>
                       <tr>
-                        <td>
-                          <%= result.id %>
-                        </td>
-                        <td>
-                          <%= result?.user?.fullName ?? "" %>
-                        </td>
-                        <td>
-                           <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
-                                      }).format(result.totalPrice) %>
-                        </td>
-                        <td>
-                          <%= result.status %>
-                        </td>
-                        <td>
-                          <%= result.paymentMethod%>
-                        </td>
-                        <td>
-                          <%= result.paymentStatus%>
-                        </td>
-                        <td>
-                          <div style="display: flex; gap: 10px;">
-                            <form action="/admin/order/<%=result.id%>" method="get">
-                              <button type="submit" class="btn btn-warning">
-                                View Detail
-                              </button>
-                            </form>
+                        <th scope="row">
+                          <div class="d-flex align-items-center">
+                            <img src="/images/product/<%= orderDetail.product.image%>" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt=""/>
                           </div>
+                        </th>
+                        <td>
+                          <p class="mb-0 mt-4">
+                            <a href="/product/<%= orderDetail.product.id%>">
+                              <%= orderDetail.product.name%>
+                            </a>
+                          </p>
+                        </td>
+                        <td>
+                          <p class="mb-0 mt-4">
+                             <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                      }).format(orderDetail.price) %>
+                          </p>
+                        </td>
+                        <td>
+                          <div class="input-group quantity mt-4" style="width: 100px;">
+                            <input type="text" class="form-control form-control-sm text-center border-0" value="<%= orderDetail.quantity%>"/>
+                          </div>
+                        </td>
+                        <td>
+                          <p class="mb-0 mt-4">
+                             <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                      }).format(orderDetail.price * orderDetail.quantity) %>
+                          </p>
                         </td>
                       </tr>
                       <% }) %>
+                        
                   </tbody>
                 </table>
               </div>
+              <a href="/admin/order" class="btn btn-success mt-3">Back</a>
             </div>
 
           </main>

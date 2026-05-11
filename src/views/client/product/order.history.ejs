@@ -54,7 +54,7 @@
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="/">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Chi Tiết Giỏ Hàng</li>
+              <li class="breadcrumb-item active" aria-current="page">Lịch sử đơn hàng </li>
             </ol>
           </nav>
         </div>
@@ -62,77 +62,83 @@
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">Products</th>
-                <th scope="col">Name</th>
-                <th scope="col">Price</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Total</th>
-                <th scope="col">Handle</th>
+                <th scope="col">Sản phẩm</th>
+                <th scope="col">Tên</th>
+                <th scope="col">Giá cả</th>
+                <th scope="col">Số lượng</th>
+                <th scope="col">Thành tiền</th>
+                <th scope="col">Trạng thái</th>
               </tr>
             </thead>
             <tbody>
-              <% cartDetails.forEach((cartDetail,index)=> { %>
+              <%if (orders?.length===0) { %>
                 <tr>
-                  <th scope="row">
-                    <div class="d-flex align-items-center">
-                      <img src="/images/product/<%=cartDetail.product.image%>" class="img-fluid me-5 rounded-circle"
-                        style="width: 80px; height: 80px;" alt="">
-                    </div>
-                  </th>
-                  <td>
-                    <p class="mb-0 mt-4">
-                      <a target="_blank" href="/product/<%=cartDetail.product.id%>">
-                        <%=cartDetail.product.name%>
-                      </a>
-                    </p>
+                  <td colspan="6">
+                    Không có đơn hàng nào được tạo
                   </td>
-                  <td>
-                    <p class="mb-0 mt-4">
-                      <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
-                        }).format(cartDetail.product.price) %>
-                    </p>
-                  </td>
-                  <td>
-                    <div class="input-group quantity mt-4" style="width: 100px;">
-                      <div class="input-group-btn">
-                        <button class="btn btn-sm btn-minus rounded-circle bg-light border">
-                          <i class="fa fa-minus"></i>
-                        </button>
-                      </div>
-                      <input type="text" class="form-control form-control-sm text-center border-0"
-                        value="<%=cartDetail.quantity%>" data-cart-detail-id="<%=cartDetail.id %>"
-                        data-cart-detail-price="<%=cartDetail.price %>" 
-                        data-cart-detail-index="<%=index%>"/>
-                      <div class="input-group-btn">
-                        <button class="btn btn-sm btn-plus rounded-circle bg-light border">
-                          <i class="fa fa-plus"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <p class="mb-0 mt-4" data-cart-detail-id="<%=cartDetail.id %>">
-                      <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
-                        }).format(cartDetail.product.price * cartDetail.quantity) %>
-                    </p>
-                  </td>
-                  <td>
-                    <form action="/delete-product-in-cart/<%=cartDetail.id%>" method="post">
-                      <button class="btn btn-md rounded-circle bg-light border mt-4">
-                        <i class="fa fa-times text-danger"></i>
-                      </button>
-                    </form>
-                  </td>
-
                 </tr>
-                <%})%>
-                  <%if (user?.sumCart===0){%>
+                <% } %>
+
+                  <% orders.forEach( function (order) { %>
                     <tr>
-                      <td colspan="6">Chưa có sản phẩm trong giỏ hàng</td>
+                      <td colspan="2">
+                        OrderId = <%=order.id%>
+                      </td>
+                      <td colspan="1">
+                        <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                      }).format(order.totalPrice) %>
+                      </td>
+                      <td colspan="2">
+
+                      </td>
+                      <td colspan="1">
+                        <%=order.status%>
+                      </td>
                     </tr>
-                    <%}%>
 
 
+                    <% order.orderDetails.forEach( function (orderDetail) { %>
+                      <tr>
+                        <th scope="row">
+                          <div class="d-flex align-items-center">
+                            <img src="/images/product/<%=orderDetail.product.image%>" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt=""/>
+                          </div>
+              
+                        </th>
+                        <td>
+                          <p class="mb-0 mt-4">
+                            <a href="/product/<%=orderDetail.product.id%>">
+                              <%=orderDetail.product.name%>
+                            </a>
+                          </p>
+                        </td>
+                        <td>
+                          <p class="mb-0 mt-4">
+                            <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                      }).format(orderDetail.price) %>
+                          </p>
+                        </td>
+                        <td>
+                          <div class="input-group quantity mt-4" style="width: 100px;">
+                            <input type="text"
+                              class="form-control form-control-sm text-center border-0"
+                              value="<%=orderDetail.quantity%>"
+                            />
+                          </div>
+                        </td>
+                        <td>
+                          <p class="mb-0 mt-4">
+                            <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                      }).format(orderDetail.price * orderDetail.quantity) %>
+                          </p>
+                        </td>
+                        <td>
+                          
+                        </td>
+                      </tr>
+                      <% }) %>
+
+                        <% }) %>
             </tbody>
           </table>
         </div>
@@ -185,7 +191,7 @@
                   <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
                     type="submit">Proceed Checkout</button>
                 </form>
-             
+
 
               </div>
             </div>
